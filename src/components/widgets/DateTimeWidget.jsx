@@ -13,18 +13,22 @@ export default function DateTimeWidget() {
     return () => clearInterval(id)
   }, [])
 
-  const hh  = pad(now.getHours())
-  const mm  = pad(now.getMinutes())
-  const dow = DAYS[now.getDay()]
-  const mon = MONTHS[now.getMonth()]
-  const d   = pad(now.getDate())
-  const mN  = pad(now.getMonth() + 1)
-  const y   = now.getFullYear()
+  const rawH = now.getHours()
+  const hh   = pad(rawH > 12 ? rawH - 12 : rawH === 0 ? 12 : rawH)
+  const mm   = pad(now.getMinutes())
+  const ampm = rawH >= 12 ? 'PM' : 'AM'
+  const dow  = DAYS[now.getDay()]
+  const mon  = MONTHS[now.getMonth()]
+  const d    = pad(now.getDate())
+  const mN   = pad(now.getMonth() + 1)
+  const y    = now.getFullYear()
 
   return (
     <div className="card" style={styles.card}>
       <div style={styles.row}>
-        <div style={styles.time}>{hh}:{mm}</div>
+        <div style={styles.time}>
+          {hh}:{mm}<span style={styles.ampm}> {ampm}</span>
+        </div>
         <div style={styles.right}>
           <div style={styles.date}>{dow}, {mon} {parseInt(d)}</div>
           <div style={styles.dateMono}>{d}-{mN}-{y}</div>
@@ -53,6 +57,11 @@ const styles = {
     letterSpacing: '-0.03em',
     color: '#fff',
     lineHeight: 1,
+  },
+  ampm: {
+    fontSize: '1.2rem',
+    opacity: 0.6,
+    letterSpacing: '0.02em',
   },
   right: {
     display: 'flex',
