@@ -7,7 +7,8 @@ export default async function handler(req, res) {
   const { lat, lon } = req.query
   if (!lat || !lon) return res.status(400).json({ error: 'lat and lon required' })
 
-  const url = `https://pollen.googleapis.com/v1/forecast:lookup` +
+  const url =
+    `https://pollen.googleapis.com/v1/forecast:lookup` +
     `?location.longitude=${lon}&location.latitude=${lat}&days=1&key=${key}`
 
   try {
