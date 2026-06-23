@@ -29,6 +29,7 @@ export default function WeatherWidget({ onData, onSummary }) {
         fetch(
           `https://api.open-meteo.com/v1/forecast?latitude=${cfg.lat}&longitude=${cfg.lon}` +
           `&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,relative_humidity_2m` +
+          `&hourly=uv_index` +
           `&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,precipitation_probability_max` +
           `&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=${encodeURIComponent(cfg.tz)}&forecast_days=7`
         ),
@@ -51,8 +52,9 @@ export default function WeatherWidget({ onData, onSummary }) {
         }
       } catch { /* pollen unavailable */ }
 
-      const alert = nws.features?.[0]?.properties || null
-      const payload = { wx, pollen, alert }
+      const alert   = nws.features?.[0]?.properties || null
+      const hourly  = wx.hourly
+      const payload = { wx, pollen, alert, hourly }
 
       setLocal(payload)
       onData?.(payload)

@@ -6,10 +6,10 @@ const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov
 function pad(n) { return String(n).padStart(2,'0') }
 
 export default function DateTimeWidget() {
-  const [now, setNow]     = useState(new Date())
-  const [secs, setSecs]   = useState(new Date().getSeconds())
+  const [now, setNow]   = useState(new Date())
+  const [secs]          = useState(() => new Date().getSeconds())
 
-  // Minute-synced tick for the clock display
+  // Minute-synced tick for the clock display only
   useEffect(() => {
     const msUntilNextMinute = 60000 - (Date.now() % 60000)
     let interval
@@ -18,12 +18,6 @@ export default function DateTimeWidget() {
       interval = setInterval(() => setNow(new Date()), 60000)
     }, msUntilNextMinute)
     return () => { clearTimeout(timeout); clearInterval(interval) }
-  }, [])
-
-  // Second-level tick just for the progress bar
-  useEffect(() => {
-    const id = setInterval(() => setSecs(new Date().getSeconds()), 1000)
-    return () => clearInterval(id)
   }, [])
 
   const rawH = now.getHours()
@@ -36,13 +30,12 @@ export default function DateTimeWidget() {
   const mN   = pad(now.getMonth() + 1)
   const y    = now.getFullYear()
 
-  const pct = (secs / 60) * 100
-
   return (
-    <div className="card" style={{
-      ...styles.card,
-      background: `linear-gradient(to right, #1e3457 ${pct}%, var(--accent) ${pct}%)`,
-    }}>
+    <div className="card" style={styles.card}>
+      <div style={{
+        ...styles.sweep,
+        animationDelay: `-${secs}s`,
+      }} />
       <div style={styles.row}>
         <div style={styles.time}>
           {hh}:{mm}<span style={styles.ampm}> {ampm}</span>
@@ -58,11 +51,25 @@ export default function DateTimeWidget() {
 
 const styles = {
   card: {
+    background: 'var(--accent)',
     borderColor: 'var(--accent-dark)',
     justifyContent: 'center',
-    transition: 'background 0.5s linear',
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  sweep: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    height: '100%',
+    background: '#1e3457',
+    animation: 'sweep 60s linear infinite',
+    zIndex: 0,
+    pointerEvents: 'none',
   },
   row: {
+    position: 'relative',
+    zIndex: 1,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',

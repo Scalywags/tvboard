@@ -7,21 +7,19 @@ import WaterWidget from "../components/widgets/WaterWidget";
 import SunWidget from "../components/widgets/SunWidget";
 import AlertsWidget from "../components/widgets/AlertsWidget";
 import HomeWidget from "../components/widgets/HomeWidget";
-
 import { supabase } from "../lib/supabase";
 
 const GOOGLE_TOKEN = import.meta.env.VITE_GOOGLE_OAUTH_TOKEN || "";
 
 const WIDGETS = {
-  weather: true,
-  sun: true,
-  alerts: true,
-  transit: true,
+  weather:  true,
+  sun:      true,
+  alerts:   true,
+  transit:  true,
   calendar: true,
   datetime: true,
-  water: true,
-  trail: true,
-  home: true,
+  water:    true,
+  home:     true,
 };
 
 export default function Board() {
@@ -30,13 +28,13 @@ export default function Board() {
   return (
     <div style={s.board}>
       <DateTimeWidget />
-      {WIDGETS.weather && <WeatherWidget onData={setWxData} />}
-      {WIDGETS.sun && <SunWidget wx={wxData?.wx} />}
-      {WIDGETS.alerts && <AlertsWidget alert={wxData?.alert} />}
-      {WIDGETS.water && <WaterWidget />}
+      {WIDGETS.weather  && <WeatherWidget onData={setWxData} />}
+      {WIDGETS.sun      && <SunWidget wx={wxData?.wx} hourly={wxData?.hourly} />}
+      {WIDGETS.alerts   && <AlertsWidget alert={wxData?.alert} />}
+      {WIDGETS.water    && <WaterWidget />}
       {WIDGETS.calendar && <CalendarWidget googleToken={GOOGLE_TOKEN} />}
-      {WIDGETS.transit && <TransitWidget />}
-      {WIDGETS.home && <HomeWidget />}
+      {WIDGETS.transit  && <TransitWidget />}
+      {WIDGETS.home     && <HomeWidget />}
 
       <button style={s.signOut} onClick={() => supabase.auth.signOut()}>
         Sign out
@@ -44,6 +42,7 @@ export default function Board() {
     </div>
   );
 }
+
 const s = {
   board: {
     display: "grid",
@@ -52,14 +51,14 @@ const s = {
     padding: "var(--gap)",
     gap: "var(--gap)",
     gridTemplateColumns: "1.1fr 1.5fr 1fr",
-    gridTemplateRows: "0.4fr 1.2fr 0.6fr 1fr 1fr",
+    gridTemplateRows: "0.4fr 1.2fr 0.9fr 1fr 1fr",
     gridTemplateAreas: `
-  "datetime  home      calendar"
-  "weather   home      calendar"
-  "sun       transit   calendar"
-  "alerts    transit     calendar"
-  "alerts    water     calendar"
-`,
+      "datetime  home     calendar"
+      "weather   home     calendar"
+      "sun       transit  calendar"
+      "alerts    transit  calendar"
+      "alerts    water    calendar"
+    `,
   },
   signOut: {
     position: "fixed",
