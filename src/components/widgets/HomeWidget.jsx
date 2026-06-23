@@ -1,8 +1,10 @@
+import { useState, useEffect } from "react";
+
 const TRASH_DAYS = [0, 1, 2, 3, 4]; // Sun-Thu
 const DAYS_SHORT = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 const AMENITIES = [
-  { name: "Fitness Package", hours: "24/7", open: () => true },
+  { name: "Fitness / Package rooms", hours: "24/7", open: () => true },
   {
     name: "Lounge / Clubhouse / Game Room",
     hours: "7am – 10pm",
@@ -12,6 +14,11 @@ const AMENITIES = [
 ];
 
 export default function HomeWidget() {
+  const [tick, setTick] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setTick((t) => t + 1), 60 * 1000);
+    return () => clearInterval(id);
+  }, []);
   const now = new Date();
   const today = now.getDay();
   const hour = now.getHours();
@@ -79,7 +86,15 @@ export default function HomeWidget() {
                 </div>
                 <div style={{ ...s.trashBannerSub, color: "#92400e" }}>
                   Bring bins in before{" "}
-                  {hour < 9 ? `${9 - hour}h ${60 - min}min` : `${60 - min}min`}
+                  {(() => {
+                    const totalRemaining = 9 * 60 - totalMin;
+                    const hrsLeft = Math.floor(totalRemaining / 60);
+                    const minLeft = totalRemaining % 60;
+                    if (hrsLeft > 0 && minLeft > 0)
+                      return `${hrsLeft}h ${minLeft}min`;
+                    if (hrsLeft > 0) return `${hrsLeft}h`;
+                    return `${minLeft}min`;
+                  })()}
                 </div>
               </div>
             )}
